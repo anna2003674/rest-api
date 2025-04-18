@@ -1,19 +1,43 @@
 package com.nerzon.course.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 
 /**
  * @author Anna Teremizova
  */
-@Data
 @Getter
 @Setter
-@AllArgsConstructor
+@Table(name = "cats")
+@Entity
 public class Cat {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
+    @Column(unique = true)
     private String name;
+
     private int age;
+
+    @Column(name="weight")
     private int weight;
+
+    public Cat(String name, int age, int weight){
+        this.name=name;
+        this.age=age;
+        this.weight=weight;
+    }
+
+    public Cat(){}
+
+    @Override
+    public String toString() {
+        return "Cat{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", age=" + age +
+                ", weight=" + weight +
+                '}';
+    }
 }

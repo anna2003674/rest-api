@@ -1,49 +1,56 @@
 package com.nerzon.course.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nerzon.course.entity.Cat;
+import com.nerzon.course.repository.CatRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import org.aspectj.apache.bcel.generic.RET;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author Anna Teremizova
  */
+@Slf4j
 @RestController
+@RequiredArgsConstructor
 public class MainController {
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final CatRepository catRepository;
+    private final ObjectMapper objectMapper;
 
-    @GetMapping("/api/main")
-    public String mainListener(){
-        return "Hello World!!!";
+    @PostMapping("/api/add")
+    public void addCat(@RequestBody Cat cat){
+        log.info("New row: " + catRepository.save(cat));
+
     }
 
-    @GetMapping("/api/cat")
-    public String giveCat(){
-        Cat cat = new Cat("Barsik", 5, 10);
-        String jsonData = null;
-        try {
-            jsonData = objectMapper.writeValueAsString(cat);
-        } catch (JsonProcessingException e) {
-            System.out.println("Error with cat");
+    @SneakyThrows
+    @GetMapping("/api/all")
+    public List<Cat> getAll(){
+        return catRepository.findAll();
+    }
+
+    @GetMapping("/api")
+    public Cat getCat(@RequestParam int id){
+        return catRepository.findById(id).orElseThrow();
+    }
+
+    @DeleteMapping("/api")
+    public void deleteCat(@RequestParam int id){
+        catRepository.deleteById(id);
+    }
+
+    @PutMapping("/api/add")
+    public String changeCat(@RequestBody Cat cat) {
+        if (!catRepository.existsById(cat.getId())) {
+            return "No such row";
         }
-        return jsonData;
+        return catRepository.save(cat).toString();
     }
 
-    @PostMapping("/api/special")
-    public String giveSpecialCat(@RequestParam String name){
-        Cat cat = new Cat(name, 5, 10);
-        String jsonData = null;
-        try {
-            jsonData = objectMapper.writeValueAsString(cat);
-        } catch (JsonProcessingException e) {
-            System.out.println("Error with cat");
-        }
-        return jsonData;
-        
-    }
+
 }
