@@ -8,8 +8,10 @@ import lombok.*;
  */
 @Getter
 @Setter
-@Table(name = "cats")
 @Entity
+@Builder
+@AllArgsConstructor
+@Table(name = "cats")
 public class Cat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
